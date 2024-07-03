@@ -3,8 +3,8 @@ import secrets
 import time
 
 from consolemenu import SelectionMenu
-from cryptography.hazmat.primitives import hashes, padding
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from libs.encryption import AES
+from libs.hashing import SHA3
 
 possible_chars = [
     *"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()_+-=[]{}|;':,.<>?/"
@@ -38,9 +38,8 @@ def encryption_menu():
     except IndexError:
         return
     # Hash the password using SHA3-256.
-    hasher = hashes.Hash(hashes.SHA3_256())
-    hasher.update(password.encode("utf-8"))
-    key = hasher.finalize()
+    hasher = SHA3(256)
+    key = hasher.hash_string(password)
     # Get the file to encrypt.
     in_dir = os.path.join(os.getcwd(), "in")
     out_dir = os.path.join(os.getcwd(), "out")
@@ -61,18 +60,15 @@ def encryption_menu():
     # Read the file's contents.
     with open(os.path.join(in_dir, file), "rb") as f:
         data = f.read()
-    # Pad the data to fit a 256 bit block size.
-    padder = padding.PKCS7(256).padder()
-    data = padder.update(data) + padder.finalize()
-    # Encrypt the data using AES-256 in CBC mode.
-    iv = os.urandom(16)
-    cipher = Cipher(algorithms.AES(key), modes.CBC(iv))
-    encryptor = cipher.encryptor()
-    data = encryptor.update(data) + encryptor.finalize()
+    # Generate a random IV.
+    iv = secrets.token_bytes(16)
+    # Encrypt the data.
+    aes = AES(key, iv)
+    encrypted_data = aes.encrypt(data)
     # Write the encrypted data to a file.
     with open(os.path.join(out_dir, str(file + ".enc")), "wb") as f:
         f.write(iv)
-        f.write(data)
+        f.write(encrypted_data)
     with open(os.path.join(out_dir, str(file + ".key")), "w") as f:
         f.write(password)
     # Print a success message.
