@@ -1,18 +1,22 @@
-import random
 import os
+import secrets
 import time
-from consolemenu import *
-from consolemenu.items import *
+
+from consolemenu import SelectionMenu
 from cryptography.hazmat.primitives import hashes, padding
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 
-possible_chars = [*"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()_+-=[]{}|;':,.<>?/"]
+possible_chars = [
+    *"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()_+-=[]{}|;':,.<>?/"
+]
 
-def generate_password(length: int) -> str:
-    password = ""
-    for i in range(length):
-        password += random.choice(possible_chars)
-    return password
+
+def generate_key(length: int) -> str:
+    key = ""
+    for _ in range(length):
+        key += secrets.choice(possible_chars)
+    return key
+
 
 def encryption_menu():
     # Ask user if they want to enter a password for encryption.
@@ -20,7 +24,7 @@ def encryption_menu():
     menu = SelectionMenu(
         options,
         "Password for Encryption",
-        "Would you like to enter a password for encryption? If not, a random password will be generated."
+        "Would you like to enter a password for encryption? If not, a random password will be generated.",
     )
     menu.show()
     # Get the user's selection and generate a password if they choose not to enter one.
@@ -30,7 +34,7 @@ def encryption_menu():
         if selection_option == "Yes":
             password = input("Enter a password: ")
         else:
-            password = generate_password(32)
+            password = generate_key(32)
     except IndexError:
         return
     # Hash the password using SHA3-256.
@@ -46,9 +50,7 @@ def encryption_menu():
         time.sleep(3)
         return
     menu = SelectionMenu(
-        files,
-        "File Selection",
-        "Please select a file from the 'in' dir to encrypt."
+        files, "File Selection", "Please select a file from the 'in' dir to encrypt."
     )
     menu.show()
     # Get the user's selection.
@@ -76,7 +78,9 @@ def encryption_menu():
     # Print a success message.
     print("Your file has been encrypted successfully.")
     print("Your key has also been saved alongside the encrypted file.")
-    print("Please save this key in a safe space and then delete it from your computer as soon as possible.")
+    print(
+        "Please save this key in a safe space and then delete it from your computer as soon as possible."
+    )
     print("If you lose this key, you will not be able to decrypt your file.")
     # Return after 10 seconds.
     time.sleep(10)

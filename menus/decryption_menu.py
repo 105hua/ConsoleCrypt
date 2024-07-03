@@ -1,9 +1,10 @@
 import os
 import time
-from consolemenu import *
-from consolemenu.items import *
+
+from consolemenu import SelectionMenu
 from cryptography.hazmat.primitives import hashes, padding
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+
 
 def decryption_menu():
     # Get the file to decrypt.
@@ -17,7 +18,7 @@ def decryption_menu():
     file_menu = SelectionMenu(
         files,
         "Select the file to decrypt",
-        "Please select a file from the 'in' dir to decrypt."
+        "Please select a file from the 'in' dir to decrypt.",
     )
     file_menu.show()
     # Get the user's selection.
@@ -47,7 +48,7 @@ def decryption_menu():
         time.sleep(3)
         return
     except Exception as e:
-        print(f"An error occurred. Please ensure you entered the correct password.")
+        print("An error occurred. Please ensure you entered the correct password.")
         print(f"Error:\n{e}")
         time.sleep(3)
         return
