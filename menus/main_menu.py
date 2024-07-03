@@ -1,6 +1,5 @@
 from consolemenu import *
 from consolemenu.items import *
-
 from menus.encryption_menu import encryption_menu
 from menus.decryption_menu import decryption_menu
 

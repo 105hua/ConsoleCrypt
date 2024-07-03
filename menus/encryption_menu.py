@@ -1,10 +1,10 @@
+import random
+import os
+import time
 from consolemenu import *
 from consolemenu.items import *
 from cryptography.hazmat.primitives import hashes, padding
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
-import random
-import os
-import time
 
 possible_chars = [*"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()_+-=[]{}|;':,.<>?/"]
 

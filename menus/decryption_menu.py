@@ -1,10 +1,9 @@
+import os
+import time
 from consolemenu import *
 from consolemenu.items import *
 from cryptography.hazmat.primitives import hashes, padding
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
-
-import os
-import time
 
 def decryption_menu():
     # Get the file to decrypt.
