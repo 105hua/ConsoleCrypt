@@ -34,7 +34,8 @@ def decryption_menu():
     try:
         with open(os.path.join(in_dir, selected_option), "rb") as file:
             data = file.read()
-        iv = secrets.token_bytes(16)
+        iv = data[:16]
+        data = data[16:]
         aes = AES(key, iv)
         decrypted_data = aes.decrypt(data)
         # Write the decrypted data to a file.

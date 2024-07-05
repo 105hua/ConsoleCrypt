@@ -7,9 +7,7 @@ class PKCS7:
             self.padding = padding.PKCS7(block_size)
         else:
             raise ValueError("Invalid block size. PKCS7 requires a block size between 1 and 256.")
-    def pad(self, data: bytes) -> bytes:
-        padder = self.padding.padder()
-        return padder.update(data) + padder.finalize()
-    def unpad(self, data: bytes) -> bytes:
-        unpadder = self.padding.unpadder()
-        return unpadder.update(data) + unpadder.finalize()
+    def create_padder(self):
+        return self.padding.padder()
+    def create_unpadder(self):
+        return self.padding.unpadder()

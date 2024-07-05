@@ -12,14 +12,17 @@ class AES:
             raise ValueError("IV must be provided.")
         self.key = key
         self.algorithm = Cipher(algorithms.AES(self.key), modes.CBC(iv))
-        self.padder = PKCS7(key_size)
+        self.padding = PKCS7(key_size)
 
     def encrypt(self, data: bytes) -> bytes:
         encryptor = self.algorithm.encryptor()
-        padded_data = self.padder.pad(data)
+        padder = self.padding.create_padder()
+        padded_data = padder.update(data) + padder.finalize()
         return encryptor.update(padded_data) + encryptor.finalize()
 
     def decrypt(self, data: bytes) -> bytes:
         decryptor = self.algorithm.decryptor()
-        unpadded_data = self.padder.unpad(data)
-        return decryptor.update(unpadded_data) + decryptor.finalize()
+        data = decryptor.update(data) + decryptor.finalize()
+        unpadder = self.padding.create_unpadder()
+        unpadded_data = unpadder.update(data) + unpadder.finalize()
+        return unpadded_data
