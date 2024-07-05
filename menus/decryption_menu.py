@@ -1,6 +1,5 @@
 import os
 import time
-import secrets
 
 from consolemenu import SelectionMenu
 from libs.hashing import SHA3
