@@ -2,9 +2,8 @@ import os
 import time
 
 from consolemenu import SelectionMenu
-from cryptography.hazmat.primitives import hashes, padding
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
-
+from libs.hashing import SHA3
+from libs.encryption import AES
 
 def decryption_menu():
     # Get the file to decrypt.
@@ -28,22 +27,19 @@ def decryption_menu():
         return
     # Get the password for decryption.
     password = input("Enter the password for decryption: ")
-    hasher = hashes.Hash(hashes.SHA3_256())
-    hasher.update(password.encode("utf-8"))
-    key = hasher.finalize()
+    hasher = SHA3(256)
+    key = hasher.hash_string(password)
     # Decrypt the file.
     try:
         with open(os.path.join(in_dir, selected_option), "rb") as file:
             data = file.read()
-        cipher = Cipher(algorithms.AES(key), modes.CBC(data[:16]))
-        decryptor = cipher.decryptor()
-        decrypted_data = decryptor.update(data[16:]) + decryptor.finalize()
-        # Unpad the decrypted data.
-        unpadder = padding.PKCS7(256).unpadder()
-        unpadded_data = unpadder.update(decrypted_data) + unpadder.finalize()
+        iv = data[:16]
+        data = data[16:]
+        aes = AES(key, iv)
+        decrypted_data = aes.decrypt(data)
         # Write the decrypted data to a file.
         with open(os.path.join(out_dir, selected_option[:-4]), "wb") as file:
-            file.write(unpadded_data)
+            file.write(decrypted_data)
         print("File decrypted successfully.")
         time.sleep(3)
         return
